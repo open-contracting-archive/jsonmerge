@@ -107,7 +107,7 @@ class OCDSVersion(Strategy):
             "releaseTag": walk.merger.head_root.get('releaseTag')
         }
 
-        if not base or base[-1]['value'] != head:
+        if (not base or base[-1]['value'] != head) and head != '':
             base.append(walk.add_meta(head, meta))
 
         return base
