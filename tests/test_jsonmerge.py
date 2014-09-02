@@ -26,6 +26,17 @@ class TestMerge(unittest.TestCase):
 
         self.assertEqual(base, "b")
 
+    def test_overwrite_does_not_overwrite_if_entry_is_blank(self):
+
+        schema = {'mergeStrategy': 'overwrite'}
+
+        base = None
+        base = jsonmerge.merge(base, "a", schema)
+        base = jsonmerge.merge(base, "b", schema)
+        base = jsonmerge.merge(base, "", schema)
+
+        self.assertEqual(base, "b")
+
     def test_version(self):
 
         schema = {'mergeStrategy': 'version'}
