@@ -126,7 +126,7 @@ class OCDSVersion(Strategy):
             item['properties'] = {}
 
         item['properties']['value'] = walk.resolve_refs(schema)
-        item['properties'].append({
+        item['properties'].update({
             "releaseDate": {
                 "type": "string",
                 "format": "date-time"
