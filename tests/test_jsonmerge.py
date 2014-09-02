@@ -436,44 +436,45 @@ class TestMerge(unittest.TestCase):
 
         self.assertEqual(base, expected)
 
-    def test_ocds_version(self):
-
-        schema = {
-            "properties": {
-                "ocid": {
-                    "type": "string"
-                },
-                "releaseID": {
-                    "type": "string"
-                },
-                "releaseDate": {
-                    "type": "string",
-                    "format": "date-time"
-                },
-                "releaseTag": {
-                    "type": "string",
-                    "enum": ["planning", "tenderNotice", "awardNotice", "contractSignature", "contractAmendment", "report", "spending", "terminationNotice", "compiled"]
-                },
-                "buyer": {
-                    "$ref": "#/definitions/organization"
-                },
+    ocds_version_schema = {
+        "properties": {
+            "ocid": {
+                "type": "string"
             },
-            "definitions": {
-                "organization": {
-                    "properties": {
-                        "id": {
-                            "type": "object",
-                            "properties": {
-                                "name": {
-                                    "type": "string",
-                                    "mergeStrategy": "ocdsVersion"
-                                }
+            "releaseID": {
+                "type": "string"
+            },
+            "releaseDate": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "releaseTag": {
+                "type": "string",
+                "enum": ["planning", "tenderNotice", "awardNotice", "contractSignature", "contractAmendment", "report", "spending", "terminationNotice", "compiled"]
+            },
+            "buyer": {
+                "$ref": "#/definitions/organization"
+            },
+        },
+        "definitions": {
+            "organization": {
+                "properties": {
+                    "id": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "mergeStrategy": "ocdsVersion"
                             }
                         }
                     }
-                },
-            }
+                }
+            },
         }
+    }
+
+    def test_ocds_version(self):
+        schema = self.ocds_version_schema
 
         a = {
             "ocid": "A",
@@ -519,6 +520,65 @@ class TestMerge(unittest.TestCase):
         base = None
         base = jsonmerge.merge(base, a, schema)
         base = jsonmerge.merge(base, b, schema)
+
+        self.assertEqual(base, expected)
+
+    def test_ocds_version_does_not_update_on_no_change(self):
+        schema = self.ocds_version_schema
+
+        a = {
+            "ocid": "A",
+            "releaseID": "A1",
+            "releaseDate": "2014-01-01",
+            "releaseTag": "planning",
+            "buyer": { "id": { "name": "Department A" } }
+        }
+
+        b = {
+            "ocid": "A",
+            "releaseID": "A2",
+            "releaseDate": "2014-01-02",
+            "releaseTag": "planning",
+            "buyer": { "id": { "name": "Department A - Office A" } }
+        }
+
+        c = {
+            "ocid": "A",
+            "releaseID": "A2",
+            "releaseDate": "2014-01-02",
+            "releaseTag": "planning",
+            "buyer": { "id": { "name": "Department A - Office A" } }
+        }
+
+        expected = {
+            "ocid": "A",
+            "releaseID": "A2",
+            "releaseDate": "2014-01-02",
+            "releaseTag": "planning",
+            "buyer": {
+                "id": {
+                    "name": [
+                        {
+                            "value": "Department A",
+                            "releaseID": "A1",
+                            "releaseDate": "2014-01-01",
+                            "releaseTag": "planning"
+                        },
+                        {
+                            "value": "Department A - Office A",
+                            "releaseID": "A2",
+                            "releaseDate": "2014-01-02",
+                            "releaseTag": "planning"
+                        }
+                    ]
+                }
+            }
+        }
+
+        base = None
+        base = jsonmerge.merge(base, a, schema)
+        base = jsonmerge.merge(base, b, schema)
+        base = jsonmerge.merge(base, c, schema)
 
         self.assertEqual(base, expected)
 

@@ -51,12 +51,14 @@ class Strategy(object):
         """
         raise NotImplemented
 
+
 class Overwrite(Strategy):
     def merge(self, walk, base, head, schema, meta, **kwargs):
         return head
 
     def get_schema(self, walk, schema, meta, **kwargs):
         return walk.resolve_refs(schema)
+
 
 class Version(Strategy):
     def merge(self, walk, base, head, schema, meta, limit=None, unique=True, **kwargs):
@@ -105,7 +107,7 @@ class OCDSVersion(Strategy):
             "releaseTag": walk.merger.head_root.get('releaseTag')
         }
 
-        if not base or base[0]['value'] != head:
+        if not base or base[-1]['value'] != head:
             base.append(walk.add_meta(head, meta))
 
         return base
