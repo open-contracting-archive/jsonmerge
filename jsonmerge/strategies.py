@@ -91,6 +91,54 @@ class Version(Strategy):
 
         return rv
 
+
+class OCDSVersion(Strategy):
+    def merge(self, walk, base, head, schema, meta, **kwargs):
+        if base is None:
+            base = []
+        else:
+            base = list(base)
+
+        meta = {
+            "releaseID": walk.merger.head_root.get('releaseID'),
+            "releaseDate": walk.merger.head_root.get('releaseDate'),
+            "releaseTag": walk.merger.head_root.get('releaseTag')
+        }
+
+        if not base or base[0]['value'] != head:
+            base.append(walk.add_meta(head, meta))
+
+        return base
+
+    def get_schema(self, walk, schema, meta, **kwargs):
+
+        if meta is not None:
+            item = dict(meta)
+        else:
+            item = {}
+
+        if 'properties' not in item:
+            item['properties'] = {}
+
+        item['properties']['value'] = walk.resolve_refs(schema)
+        item['properties'].append({
+            "releaseDate": {
+                "type": "string",
+                "format": "date-time"
+            },
+            "releaseID": {
+                "type": "string"
+            },
+            "releaseTag": {
+                "type": "string"
+            }
+        })
+
+        rv = {"items": item}
+
+        return rv
+
+
 class Append(Strategy):
     def merge(self, walk, base, head, schema, meta, **kwargs):
         if not walk.is_type(head, "array"):

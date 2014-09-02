@@ -58,7 +58,7 @@ class WalkSchema(Walk):
     def resolve_refs(self, schema, resolve_base=False):
 
         if (not resolve_base) and self.resolver.base_uri == self.merger.schema.get('id', ''):
-            # no need to resolve refs in the context of the original schema - they 
+            # no need to resolve refs in the context of the original schema - they
             # are still valid
             return schema
         elif self.is_type(schema, "array"):
@@ -108,6 +108,7 @@ class WalkSchema(Walk):
 
         return strategy.get_schema(self, schema, meta, **kwargs)
 
+
 class Merger(object):
 
     STRATEGIES = {
@@ -115,7 +116,8 @@ class Merger(object):
         "version": strategies.Version(),
         "append": strategies.Append(),
         "objectMerge": strategies.ObjectMerge(),
-        "overwriteByKey": strategies.OverwriteByKey()
+        "overwriteByKey": strategies.OverwriteByKey(),
+        "ocdsVersion": strategies.OCDSVersion()
     }
 
     def __init__(self, schema, strategies=()):
@@ -166,6 +168,8 @@ class Merger(object):
         Returns an updated base document
         """
 
+        self.base_root = base
+        self.head_root = head
         walk = WalkInstance(self)
         return walk.descend(self.schema, base, head, meta)
 
