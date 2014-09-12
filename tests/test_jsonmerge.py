@@ -372,7 +372,7 @@ class TestMerge(unittest.TestCase):
 
         self.assertEqual(base, "foo")
 
-   def test_merge_by_id(self):
+    def test_merge_by_id(self):
         schema = {
             "properties": {
                 "awards": {

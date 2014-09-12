@@ -116,7 +116,7 @@ class Merger(object):
         "version": strategies.Version(),
         "append": strategies.Append(),
         "objectMerge": strategies.ObjectMerge(),
-        "ocdsVersion": strategies.OCDSVersion()
+        "ocdsVersion": strategies.OCDSVersion(),
         "arrayMergeById": strategies.ArrayMergeById()
     }
 
