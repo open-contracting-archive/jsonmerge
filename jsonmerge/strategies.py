@@ -149,7 +149,8 @@ class OCDSVersion(Strategy):
             }
         })
 
-        rv = {"items": item}
+        rv = {  "type": "array",
+                "items": item }
 
         return rv
 

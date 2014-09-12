@@ -1364,3 +1364,63 @@ class TestGetSchema(unittest.TestCase):
         schema2 = merger.get_schema()
 
         self.assertEqual(schema2, expected)
+
+    def test_ocdsversion_adds_array_type_and_ocds_properties(self):
+        schema = {
+            "type": "object",
+            "properties": {
+                "buyer": {
+                    "properties": {
+                        "id": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "string",
+                                    "mergeStrategy": "ocdsVersion"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        expected = {
+            "type": "object",
+            "properties": {
+                "buyer": {
+                    "properties": {
+                        "id": {
+                            "type": "object",
+                            "properties": {
+                                "name": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "value": {
+                                                "type": "string"
+                                            },
+                                            "releaseDate": {
+                                                "type": "string",
+                                                "format": "date-time"
+                                            },
+                                            "releaseID": {
+                                                "type": "string"
+                                            },
+                                            "releaseTag": {
+                                                "type": "string"
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        merger = jsonmerge.Merger(schema)
+        schema2 = merger.get_schema()
+
+        self.assertEqual(schema2, expected)
