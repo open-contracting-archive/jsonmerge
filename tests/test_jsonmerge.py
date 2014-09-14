@@ -1365,6 +1365,115 @@ class TestGetSchema(unittest.TestCase):
 
         self.assertEqual(schema2, expected)
 
+    def test_merge_by_id_with_depth(self):
+
+        schema = {
+            "properties": {
+                "test": {
+                    "mergeStrategy": "arrayMergeById",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/refitem"
+                    }
+                }
+            },
+            "definitions": {
+                "refitem": {
+                    "type": "object",
+                    "properties": {
+                        "field1": {
+                            "type": "string",
+                            "mergeStrategy": "version"
+                        }
+                    }
+                }
+            }
+        }
+
+        expected = {
+            "properties": {
+                "test": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/refitem"
+                    }
+                }
+            },
+            "definitions": {
+                "refitem": {
+                    "type": "object",
+                    "properties": {
+                        "field1": {
+                            "type": "array",
+                            "items": {
+                                "properties": {
+                                    "value": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        self.maxDiff = None
+
+        merger = jsonmerge.Merger(schema)
+        schema2 = merger.get_schema()
+
+        self.assertEqual(schema2, expected)
+
+    def test_merge_by_id_with_depth_no_ref(self):
+
+        schema = {
+            "properties": {
+                "test": {
+                    "mergeStrategy": "arrayMergeById",
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "field1": {
+                                "type": "string",
+                                "mergeStrategy": "version"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        expected = {
+            "properties": {
+                "test": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "field1": {
+                                "type": "array",
+                                "items": {
+                                    "properties": {
+                                        "value": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+        }
+        self.maxDiff = None
+
+        merger = jsonmerge.Merger(schema)
+        schema2 = merger.get_schema()
+
+        self.assertEqual(schema2, expected)
+
+
     def test_ocdsversion_adds_array_type_and_ocds_properties(self):
         schema = {
             "type": "object",
