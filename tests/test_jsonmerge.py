@@ -1466,7 +1466,6 @@ class TestGetSchema(unittest.TestCase):
                 }
             }
         }
-        self.maxDiff = None
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
@@ -1515,7 +1514,6 @@ class TestGetSchema(unittest.TestCase):
                 }
             },
         }
-        self.maxDiff = None
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
