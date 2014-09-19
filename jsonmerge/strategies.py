@@ -58,7 +58,7 @@ class Strategy(object):
 
 class Overwrite(Strategy):
     def merge(self, walk, base, head, schema, meta, **kwargs):
-        if head == "":
+        if head == None:
             return base
         else:
             return head
