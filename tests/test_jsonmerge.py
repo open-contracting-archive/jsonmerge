@@ -2,10 +2,14 @@
 import unittest
 import jsonmerge
 import jsonmerge.strategies
-from jsonmerge.exceptions import HeadInstanceError, \
-                                 BaseInstanceError, \
-                                 SchemaError
+from jsonmerge.exceptions import (
+    HeadInstanceError,
+    BaseInstanceError,
+    SchemaError
+)
+
 import jsonschema
+
 
 class TestMerge(unittest.TestCase):
 
@@ -74,14 +78,14 @@ class TestMerge(unittest.TestCase):
 
         self.assertEqual(base, [
             {'value': "a",
-            'uri': 'http://example.com/a' },
+             'uri': 'http://example.com/a'},
             {'value': "b",
-            'uri': 'http://example.com/b' }])
+             'uri': 'http://example.com/b'}])
 
     def test_version_ignoredups_false(self):
 
-        schema = {  'mergeStrategy': 'version',
-                    'mergeOptions': { 'ignoreDups': False } }
+        schema = {'mergeStrategy': 'version',
+                  'mergeOptions': {'ignoreDups': False}}
 
         merger = jsonmerge.Merger(schema)
 
@@ -89,12 +93,12 @@ class TestMerge(unittest.TestCase):
         base = merger.merge(base, "a")
         base = merger.merge(base, "a")
 
-        self.assertEqual(base, [ {'value': "a"}, {'value': "a"} ])
+        self.assertEqual(base, [{'value': "a"}, {'value': "a"}])
 
     def test_version_unique_false(self):
 
-        schema = {  'mergeStrategy': 'version',
-                    'mergeOptions': { 'unique': False } }
+        schema = {'mergeStrategy': 'version',
+                  'mergeOptions': {'unique': False}}
 
         merger = jsonmerge.Merger(schema)
 
@@ -102,11 +106,11 @@ class TestMerge(unittest.TestCase):
         base = merger.merge(base, "a")
         base = merger.merge(base, "a")
 
-        self.assertEqual(base, [ {'value': "a"}, {'value': "a"} ])
+        self.assertEqual(base, [{'value': "a"}, {'value': "a"}])
 
     def test_version_ignoredups_true(self):
 
-        schema = {  'mergeStrategy': 'version' }
+        schema = {'mergeStrategy': 'version'}
 
         merger = jsonmerge.Merger(schema)
 
@@ -114,12 +118,12 @@ class TestMerge(unittest.TestCase):
         base = merger.merge(base, "a")
         base = merger.merge(base, "a")
 
-        self.assertEqual(base, [ {'value': "a"} ])
+        self.assertEqual(base, [{'value': "a"}])
 
     def test_version_last(self):
 
-        schema = {  'mergeStrategy': 'version',
-                    'mergeOptions': { 'limit': 1 } }
+        schema = {'mergeStrategy': 'version',
+                  'mergeOptions': {'limit': 1}}
 
         base = None
         base = jsonmerge.merge(base, "a", schema)
@@ -128,7 +132,6 @@ class TestMerge(unittest.TestCase):
         self.assertEqual(base, [{'value': "b"}])
 
     def test_append(self):
-
         schema = {'mergeStrategy': 'append'}
 
         base = None
@@ -142,24 +145,24 @@ class TestMerge(unittest.TestCase):
         schema = {'mergeStrategy': 'append'}
 
         base = None
-        self.assertRaises(HeadInstanceError, jsonmerge.merge, base, "a", schema)
+        self.assertRaises(HeadInstanceError,
+                          jsonmerge.merge, base, "a", schema)
 
     def test_append_type_error_base(self):
 
         schema = {'mergeStrategy': 'append'}
 
         base = "ab"
-        self.assertRaises(BaseInstanceError, jsonmerge.merge, base, ["a"], schema)
+        self.assertRaises(BaseInstanceError,
+                          jsonmerge.merge, base, ["a"], schema)
 
     def test_merge_default(self):
-
         schema = {}
-
         base = None
         base = jsonmerge.merge(base, {'a': "a"}, schema)
         base = jsonmerge.merge(base, {'b': "b"}, schema)
 
-        self.assertEqual(base, {'a': "a",  'b': "b"})
+        self.assertEqual(base, {'a': "a", 'b': "b"})
 
     def test_merge_empty_schema(self):
 
@@ -178,21 +181,23 @@ class TestMerge(unittest.TestCase):
         base = jsonmerge.merge(base, {'a': "a"}, schema)
         base = jsonmerge.merge(base, {'b': "b"}, schema)
 
-        self.assertEqual(base, {'a': "a",  'b': "b"})
+        self.assertEqual(base, {'a': "a", 'b': "b"})
 
     def test_merge_type_error(self):
 
         schema = {'mergeStrategy': 'objectMerge'}
 
         base = None
-        self.assertRaises(HeadInstanceError, jsonmerge.merge, base, "a", schema)
+        self.assertRaises(HeadInstanceError,
+                          jsonmerge.merge, base, "a", schema)
 
     def test_merge_type_error_base(self):
 
         schema = {'mergeStrategy': 'objectMerge'}
 
         base = "ab"
-        self.assertRaises(BaseInstanceError, jsonmerge.merge, base, {'foo': 1}, schema)
+        self.assertRaises(BaseInstanceError,
+                          jsonmerge.merge, base, {'foo': 1}, schema)
 
     def test_merge_overwrite(self):
 
@@ -206,12 +211,10 @@ class TestMerge(unittest.TestCase):
 
     def test_merge_append(self):
 
-        schema =    {
-                        'mergeStrategy': 'objectMerge',
-                        'properties': {
-                            'a': {'mergeStrategy': 'append' }
-                        }
-                    }
+        schema = {'mergeStrategy': 'objectMerge',
+                  'properties': {
+                      'a': {'mergeStrategy': 'append'}
+                  }}
 
         base = None
         base = jsonmerge.merge(base, {'a': ["a"]}, schema)
@@ -221,12 +224,10 @@ class TestMerge(unittest.TestCase):
 
     def test_merge_append_pattern(self):
 
-        schema =    {
-                        'mergeStrategy': 'objectMerge',
-                        'patternProperties': {
-                            'a': {'mergeStrategy': 'append' }
-                        }
-                    }
+        schema = {'mergeStrategy': 'objectMerge',
+                  'patternProperties': {
+                      'a': {'mergeStrategy': 'append'}
+                  }}
 
         base = None
         base = jsonmerge.merge(base, {'a': ["a"]}, schema)
@@ -236,12 +237,10 @@ class TestMerge(unittest.TestCase):
 
     def test_merge_append_additional(self):
 
-        schema =    {
-                        'mergeStrategy': 'objectMerge',
-                        'additionalProperties': {
-                            'a': {'mergeStrategy': 'append' }
-                        }
-                    }
+        schema = {'mergeStrategy': 'objectMerge',
+                  'additionalProperties': {
+                      'a': {'mergeStrategy': 'append'}
+                  }}
 
         base = None
         base = jsonmerge.merge(base, {'a': ["a"]}, schema)
@@ -249,65 +248,64 @@ class TestMerge(unittest.TestCase):
 
         self.assertEqual(base, {'a': ["a", "b"], 'b': 'c'})
 
-
     def test_example(self):
 
-        head1 =     {
-                        'buyer': {
-                            'id': {
-                                'name': "Test old",
-                            },
-                            'uri': 'Test uri old',
-                        }
-                    }
+        head1 = {
+            'buyer': {
+                'id': {
+                    'name': "Test old",
+                },
+                'uri': 'Test uri old',
+            }
+        }
 
-        head2 =     {
-                        'buyer': {
-                            'id': {
-                                'name': "Test new"
-                            },
-                            'uri': 'Test uri new',
-                        },
+        head2 = {
+            'buyer': {
+                'id': {
+                    'name': "Test new"
+                },
+                'uri': 'Test uri new',
+            },
 
-                        'award': "Award"
-                    }
+            'award': "Award"
+        }
 
         base_expect = {
-                        'buyer': {
-                            'id': {
-                                'name': [
-                                    {'value': "Test old" },
-                                    {'value': "Test new" },
-                                ]
-                            },
-                            'uri': 'Test uri new',
-                        },
+            'buyer': {
+                'id': {
+                    'name': [
+                        {'value': "Test old"},
+                        {'value': "Test new"},
+                    ]
+                },
+                'uri': 'Test uri new',
+            },
 
-                        'award': "Award"
-                    }
+            'award': "Award"
+        }
 
-        schema =    {
-                        'mergeStrategy': 'objectMerge',
-                        'properties': {
-                            'buyer': {
-                                'properties': {
-                                    'id': {
-                                        'properties': {
-                                            'name': {
-                                                'mergeStrategy': 'version',
-                                            }
-                                        }
-                                    },
-                                    'uri': {
-                                        'mergeStrategy': 'overwrite',
-                                    }
-                                },
-                            },
-                            'award': {
-                                'mergeStrategy': 'overwrite',
+        schema = {
+            'mergeStrategy': 'objectMerge',
+            'properties': {
+                'buyer': {
+                    'properties': {
+                        'id': {
+                            'properties': {
+                                'name': {
+                                    'mergeStrategy': 'version',
+                                }
                             }
                         },
-                    }
+                        'uri': {
+                            'mergeStrategy': 'overwrite',
+                        }
+                    },
+                },
+                'award': {
+                    'mergeStrategy': 'overwrite',
+                }
+            },
+        }
 
         base = None
         base = jsonmerge.merge(base, head1, schema)
@@ -317,35 +315,35 @@ class TestMerge(unittest.TestCase):
 
     def test_refs(self):
 
-        schema =    {
-                        'properties': {
-                            'a': {'$ref': "#/definitions/a"},
-                        },
-                        'definitions': {
-                            "a": {
-                                "properties": {
-                                    "b": { 'mergeStrategy': 'version' },
-                                }
-                            },
-                        }
+        schema = {
+            'properties': {
+                'a': {'$ref': "#/definitions/a"},
+            },
+            'definitions': {
+                "a": {
+                    "properties": {
+                        "b": {'mergeStrategy': 'version'},
                     }
+                },
+            }
+        }
 
         merger = jsonmerge.Merger(schema)
 
         base = None
-        base = merger.merge(base, {"a": {"b": "c"} })
-        base = merger.merge(base, {"a": {"b": "d"} })
+        base = merger.merge(base, {"a": {"b": "c"}})
+        base = merger.merge(base, {"a": {"b": "d"}})
 
-        self.assertEqual(base, {"a": {"b": [{"value": "c"}, {"value": "d"}] } })
+        self.assertEqual(base, {"a": {"b": [{"value": "c"}, {"value": "d"}]}})
 
     def test_oneof(self):
 
-        schema =    {
-                        'oneOf': [
-                            { 'properties': { 'a': {} } },
-                            { 'properties': { 'b': {} } }
-                        ]
-                    }
+        schema = {
+            'oneOf': [
+                {'properties': {'a': {}}},
+                {'properties': {'b': {}}}
+            ]
+        }
 
         merger = jsonmerge.Merger(schema)
 
@@ -357,15 +355,14 @@ class TestMerge(unittest.TestCase):
 
     def test_custom_strategy(self):
 
-        schema = {
-                    'mergeStrategy': 'myStrategy'
-                }
+        schema = {'mergeStrategy': 'myStrategy'}
 
         class MyStrategy(jsonmerge.strategies.Strategy):
             def merge(self, walk, base, head, schema, meta, **kwargs):
                 return "foo"
 
-        merger = jsonmerge.Merger(schema=schema, strategies={'myStrategy': MyStrategy()})
+        merger = jsonmerge.Merger(schema=schema,
+                                  strategies={'myStrategy': MyStrategy()})
 
         base = None
         base = merger.merge(base, {'a': 1})
@@ -424,7 +421,7 @@ class TestMerge(unittest.TestCase):
                 "awards": {
                     "type": "array",
                     "mergeStrategy": "arrayMergeById",
-                    "mergeOptions": { "ignoreId": "" },
+                    "mergeOptions": {"ignoreId": ""},
                     "items": {
                         "properties": {
                             "id": {"type": "string"},
@@ -495,7 +492,7 @@ class TestMerge(unittest.TestCase):
     def test_merge_by_id_simple_ref(self):
         schema = {
             "mergeStrategy": "arrayMergeById",
-            "mergeOptions": { "idRef": "key" }
+            "mergeOptions": {"idRef": "key"}
         }
 
         a = [
@@ -547,21 +544,21 @@ class TestMerge(unittest.TestCase):
         }
 
         a = [
-            {'foo': {'bar': 1}, 'baz': 1 }
+            {'foo': {'bar': 1}, 'baz': 1}
         ]
 
         b = [
-            {'foo': {'bar': 2} }
+            {'foo': {'bar': 2}}
         ]
 
         c = [
-            {'foo': {'bar': 1}, 'baz': 2 }
+            {'foo': {'bar': 1}, 'baz': 2}
         ]
 
         # by default, it should fall back to "replace" strategy for integers.
         expected = [
-            {'foo': {'bar': 1}, 'baz': 2 },
-            {'foo': {'bar': 2} }
+            {'foo': {'bar': 1}, 'baz': 2},
+            {'foo': {'bar': 2}}
         ]
 
         merger = jsonmerge.Merger(schema)
@@ -690,8 +687,8 @@ class TestMerge(unittest.TestCase):
         }
 
         head = [
-                {'id': 'A'},
-                {'id': 'B'}
+            {'id': 'A'},
+            {'id': 'B'}
         ]
 
         merger = jsonmerge.Merger(schema)
@@ -727,13 +724,13 @@ class TestMerge(unittest.TestCase):
         }
 
         base = [
-                {'id': 'a'},
-                {'id': 'a'}
+            {'id': 'a'},
+            {'id': 'a'}
         ]
 
         head = [
-                {'id': 'a',
-                'foo': 1}
+            {'id': 'a',
+             'foo': 1}
         ]
 
         merger = jsonmerge.Merger(schema)
@@ -746,15 +743,15 @@ class TestMerge(unittest.TestCase):
         }
 
         base = [
-                {'id': 'a',
-                'foo': 1},
+            {'id': 'a',
+             'foo': 1},
         ]
 
         head = [
-                {'id': 'a',
-                'foo': 2},
-                {'id': 'a',
-                'foo': 3}
+            {'id': 'a',
+             'foo': 2},
+            {'id': 'a',
+             'foo': 3}
         ]
 
         merger = jsonmerge.Merger(schema)
@@ -765,8 +762,8 @@ class TestMerge(unittest.TestCase):
     def test_append_with_maxitems(self):
 
         schema = {
-                "mergeStrategy": "append",
-                "maxItems": 2,
+            "mergeStrategy": "append",
+            "maxItems": 2,
         }
 
         merger = jsonmerge.Merger(schema)
@@ -786,8 +783,8 @@ class TestMerge(unittest.TestCase):
     def test_append_with_unique(self):
 
         schema = {
-                "mergeStrategy": "append",
-                "uniqueItems": True,
+            "mergeStrategy": "append",
+            "uniqueItems": True,
         }
 
         merger = jsonmerge.Merger(schema)
@@ -818,7 +815,7 @@ class TestMerge(unittest.TestCase):
             },
             "releaseTag": {
                 "type": "string",
-                "enum": ["planning", "tenderNotice", "awardNotice", "contractSignature", "contractAmendment", "report", "spending", "terminationNotice", "compiled"]
+                "enum": ["planning", "tenderNotice", "awardNotice", "contractSignature", "contractAmendment", "report", "spending", "terminationNotice", "compiled"]  # nopep8
             },
             "buyer": {
                 "$ref": "#/definitions/organization"
@@ -849,7 +846,7 @@ class TestMerge(unittest.TestCase):
             "releaseID": "A1",
             "releaseDate": "2014-01-01",
             "releaseTag": "planning",
-            "buyer": { "id": { "name": "Department A" } }
+            "buyer": {"id": {"name": "Department A"}}
         }
 
         b = {
@@ -857,7 +854,7 @@ class TestMerge(unittest.TestCase):
             "releaseID": "A2",
             "releaseDate": "2014-01-02",
             "releaseTag": "planning",
-            "buyer": { "id": { "name": "Department A - Office A" } }
+            "buyer": {"id": {"name": "Department A - Office A"}}
         }
 
         expected = {
@@ -899,7 +896,7 @@ class TestMerge(unittest.TestCase):
             "releaseID": "A1",
             "releaseDate": "2014-01-01",
             "releaseTag": "planning",
-            "buyer": { "id": { "name": "Department A" } }
+            "buyer": {"id": {"name": "Department A"}}
         }
 
         b = {
@@ -907,7 +904,7 @@ class TestMerge(unittest.TestCase):
             "releaseID": "A2",
             "releaseDate": "2014-01-02",
             "releaseTag": "planning",
-            "buyer": { "id": { "name": "Department A - Office A" } }
+            "buyer": {"id": {"name": "Department A - Office A"}}
         }
 
         c = {
@@ -915,7 +912,7 @@ class TestMerge(unittest.TestCase):
             "releaseID": "A2",
             "releaseDate": "2014-01-02",
             "releaseTag": "planning",
-            "buyer": { "id": { "name": "Department A - Office A" } }
+            "buyer": {"id": {"name": "Department A - Office A"}}
         }
 
         expected = {
@@ -960,7 +957,7 @@ class TestMerge(unittest.TestCase):
             "releaseID": "A1",
             "releaseDate": "2014-01-01",
             "releaseTag": "planning",
-            "buyer": { "id": { "name": "Department A" } }
+            "buyer": {"id": {"name": "Department A"}}
         }
 
         b = {
@@ -968,7 +965,7 @@ class TestMerge(unittest.TestCase):
             "releaseID": "A2",
             "releaseDate": "2014-01-02",
             "releaseTag": "planning",
-            "buyer": { "id": { "name": "" } }
+            "buyer": {"id": {"name": ""}}
         }
 
         expected = {
@@ -1000,42 +997,46 @@ class TestMerge(unittest.TestCase):
 class TestGetSchema(unittest.TestCase):
 
     def test_default_overwrite(self):
-        schema = { 'description': 'test' }
+        schema = {'description': 'test'}
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
 
-        self.assertEqual(schema2, { 'description': 'test' })
+        self.assertEqual(schema2, {'description': 'test'})
 
     def test_default_object_merge_trivial(self):
-        schema = { 'type': 'object' }
+        schema = {'type': 'object'}
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
 
-        self.assertEqual(schema2, { 'type': 'object' })
+        self.assertEqual(schema2, {'type': 'object'})
 
     def test_default_object_merge(self):
-        schema = { 'properties': {
-                        'foo': {
-                            'mergeStrategy': 'version',
-                        }
-                } }
+        schema = {
+            'properties': {
+                'foo': {
+                    'mergeStrategy': 'version',
+                }
+            }
+        }
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
 
-        self.assertEqual(schema2, { 'properties': {
-                                        'foo': {
-                                            'type': 'array',
-                                            'items': {
-                                                'properties': {
-                                                    'value': {},
-                                                }
-                                            }
-                                        }
-                                    }
-                                 } )
+        self.assertEqual(schema2,
+                         {
+                             'properties': {
+                                 'foo': {
+                                     'type': 'array',
+                                     'items': {
+                                         'properties': {
+                                             'value': {},
+                                         }
+                                     }
+                                 }
+                             }
+                         })
 
     def test_overwrite(self):
         schema = {'mergeStrategy': 'overwrite'}
@@ -1046,8 +1047,8 @@ class TestGetSchema(unittest.TestCase):
         self.assertEqual(schema2, {})
 
     def test_append(self):
-        schema = {  'type': 'array',
-                    'mergeStrategy': 'append' }
+        schema = {'type': 'array',
+                  'mergeStrategy': 'append'}
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
@@ -1055,66 +1056,67 @@ class TestGetSchema(unittest.TestCase):
         self.assertEqual(schema2, {'type': 'array'})
 
     def test_version(self):
-        schema = {  'mergeStrategy': 'version' }
+        schema = {'mergeStrategy': 'version'}
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
 
         self.assertEqual(schema2,
-                {
-                    'type': 'array',
-                    'items': {
-                        'properties': {
-                            'value': {}
-                        }
-                    }
-                })
+                         {
+                             'type': 'array',
+                             'items': {
+                                 'properties': {
+                                     'value': {}
+                                 }
+                             }
+                         })
 
     def test_version_meta(self):
-        schema = {  'type': 'object',
-                    'mergeStrategy': 'version' }
+        schema = {'type': 'object',
+                  'mergeStrategy': 'version'}
 
-        meta =  {   'properties': {
-                        'date': {},
-                        'version': {}
-                    }
-                }
+        meta = {
+            'properties': {
+                'date': {},
+                'version': {}
+            }
+        }
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema(meta)
 
         self.assertEqual(schema2,
-                {
-                    'type': 'array',
-                    'items': {
-                        'properties': {
-                            'value': { 'type': 'object' },
-                            'date': {},
-                            'version': {}
-                        }
-                    }
-                })
+                         {
+                             'type': 'array',
+                             'items': {
+                                 'properties': {
+                                     'value': {'type': 'object'},
+                                     'date': {},
+                                     'version': {}
+                                 }
+                             }
+                         })
 
     def test_version_limit(self):
-        schema = {  'mergeStrategy': 'version',
-                    'mergeOptions': { 'limit': 5 } }
+        schema = {'mergeStrategy': 'version',
+                  'mergeOptions': {'limit': 5}}
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
 
         self.assertEqual(schema2,
-                {
-                    'type': 'array',
-                    'items': {
-                        'properties': {
-                            'value': {}
-                        }
-                    },
-                    'maxItems': 5
-                })
+                         {
+                             'type': 'array',
+                             'items': {
+                                 'properties': {
+                                     'value': {}
+                                 }
+                             },
+                             'maxItems': 5
+                         })
 
     def test_object_merge_simple(self):
-        schema = {  'mergeStrategy': 'objectMerge' }
+        schema = {'mergeStrategy': 'objectMerge'}
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
@@ -1122,39 +1124,37 @@ class TestGetSchema(unittest.TestCase):
         self.assertEqual(schema2, {})
 
     def test_object_merge_nested(self):
-        schema =    {   'mergeStrategy': 'objectMerge',
-                        'properties': {
-                            'foo': {
-                                'mergeStrategy': 'version',
-                            }
-                         }
-                    }
+        schema = {'mergeStrategy': 'objectMerge',
+                  'properties': {
+                      'foo': {'mergeStrategy': 'version'}
+                  }}
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
 
         self.assertEqual(schema2,
-                {   'properties': {
-                        'foo': {
-                            'type': 'array',
-                            'items': {
-                                'properties': {
-                                    'value': {}
-                                }
-                            }
-                        }
-                    }
-                })
+                         {
+                             'properties': {
+                                 'foo': {
+                                     'type': 'array',
+                                     'items': {
+                                         'properties': {
+                                             'value': {}
+                                         }
+                                     }
+                                 }
+                             }
+                         })
 
     def test_oneof(self):
 
-        schema =    {
-                        'mergeStrategy': 'objectMerge',
-                        'oneOf': [
-                            { 'properties': { 'a': {} } },
-                            { 'properties': { 'b': {} } }
-                        ]
-                    }
+        schema = {
+            'mergeStrategy': 'objectMerge',
+            'oneOf': [
+                {'properties': {'a': {}}},
+                {'properties': {'b': {}}}
+            ]
+        }
 
         merger = jsonmerge.Merger(schema)
         self.assertRaises(SchemaError, merger.get_schema)
@@ -1162,54 +1162,54 @@ class TestGetSchema(unittest.TestCase):
     def test_resolve_refs(self):
 
         schema_1 = {
-                        'id': 'http://example.com/schema_1.json',
-                        '$ref': 'schema_2.json#/definitions/foo'
-                }
+            'id': 'http://example.com/schema_1.json',
+            '$ref': 'schema_2.json#/definitions/foo'
+        }
 
         schema_2 = {
-                        'id': 'http://example.com/schema_2.json',
-                        'definitions': {
-                            'foo': {
-                                'mergeStrategy': 'overwrite',
-                                'properties': {
-                                    'bar': {
-                                        '$ref': '#/definitions/baz'
-                                    },
-                                    'b': {}
-                                },
-                            },
-                            'baz': {
-                                'mergeStrategy': 'append'
-                            }
-                        }
-                    }
+            'id': 'http://example.com/schema_2.json',
+            'definitions': {
+                'foo': {
+                    'mergeStrategy': 'overwrite',
+                    'properties': {
+                        'bar': {
+                            '$ref': '#/definitions/baz'
+                        },
+                        'b': {}
+                    },
+                },
+                'baz': {
+                    'mergeStrategy': 'append'
+                }
+            }
+        }
 
         merger = jsonmerge.Merger(schema_1)
         merger.cache_schema(schema_2)
 
         mschema = merger.get_schema()
 
-        d = {'bar': [] }
+        d = {'bar': []}
         jsonschema.validate(d, mschema)
 
     def test_dont_resolve_refs(self):
 
         schema = {
-                        'id': 'http://example.com/schema_1.json',
-                        'mergeStrategy': 'overwrite',
-                        'properties': {
-                            'foo': {
-                                '$ref': '#/definitions/bar'
-                            }
-                        },
-                        'definitions': {
-                            'bar': {
-                                'properties': {
-                                    'baz': {}
-                                }
-                            }
-                        }
+            'id': 'http://example.com/schema_1.json',
+            'mergeStrategy': 'overwrite',
+            'properties': {
+                'foo': {
+                    '$ref': '#/definitions/bar'
+                }
+            },
+            'definitions': {
+                'bar': {
+                    'properties': {
+                        'baz': {}
                     }
+                }
+            }
+        }
 
         mschema_correct = dict(schema)
         del mschema_correct['mergeStrategy']
@@ -1222,9 +1222,7 @@ class TestGetSchema(unittest.TestCase):
 
     def test_reference_in_meta(self):
 
-        schema = {
-                    'mergeStrategy': 'version'
-                }
+        schema = {'mergeStrategy': 'version'}
 
         meta_schema = {
             'id': 'http://example.com/schema_1.json',
@@ -1250,35 +1248,35 @@ class TestGetSchema(unittest.TestCase):
         mschema = merger.get_schema(meta=meta_schema)
 
         self.assertEqual(mschema,
-            {
-                'type': 'array',
-                'items': {
-                    'properties': {
-                        'value': {},
-                        'foo': {'type': 'string'}
-                    }
-                }
-            })
+                         {
+                             'type': 'array',
+                             'items': {
+                                 'properties': {
+                                     'value': {},
+                                     'foo': {'type': 'string'}
+                                 }
+                             }
+                         })
 
     def test_array_in_schema(self):
 
         schema_1 = {
-                        'id': 'http://example.com/schema_1.json',
-                        '$ref': 'schema_2.json#/definitions/foo'
-                }
+            'id': 'http://example.com/schema_1.json',
+            '$ref': 'schema_2.json#/definitions/foo'
+        }
 
         schema_2 = {
-                        'id': 'http://example.com/schema_2.json',
-                        'definitions': {
-                            'foo': {
-                                'mergeStrategy': 'overwrite',
-                                'enum': [
-                                    "foo",
-                                    "bar",
-                                ]
-                            },
-                        }
-                    }
+            'id': 'http://example.com/schema_2.json',
+            'definitions': {
+                'foo': {
+                    'mergeStrategy': 'overwrite',
+                    'enum': [
+                        "foo",
+                        "bar",
+                    ]
+                },
+            }
+        }
 
         merger = jsonmerge.Merger(schema_1)
         merger.cache_schema(schema_2)
@@ -1286,11 +1284,11 @@ class TestGetSchema(unittest.TestCase):
         mschema = merger.get_schema()
 
         d = {
-                'enum': [
-                    "foo",
-                    "bar",
-                ]
-            }
+            'enum': [
+                "foo",
+                "bar",
+            ]
+        }
 
         self.assertEqual(d, mschema)
 
@@ -1358,7 +1356,6 @@ class TestGetSchema(unittest.TestCase):
                 'type': 'object'
             }
         }
-
 
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
@@ -1472,7 +1469,6 @@ class TestGetSchema(unittest.TestCase):
         schema2 = merger.get_schema()
 
         self.assertEqual(schema2, expected)
-
 
     def test_ocdsversion_adds_array_type_and_ocds_properties(self):
         schema = {
