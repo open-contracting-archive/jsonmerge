@@ -947,9 +947,55 @@ class TestMerge(unittest.TestCase):
 
         self.assertEqual(base, expected)
 
-    def test_ocds_version_does_not_update_on_empty_cell(self):
-        # Lots of releases have lots of empty cells
-        # so don't update with the value
+    def test_ocds_version_does_not_update_on_none(self):
+        # None means this cell hasn't been specified in this release, so do
+        # nothing
+        schema = self.ocds_version_schema
+
+        a = {
+            "ocid": "A",
+            "releaseID": "A1",
+            "releaseDate": "2014-01-01",
+            "releaseTag": "planning",
+            "buyer": {"id": {"name": "Department A"}}
+        }
+
+        b = {
+            "ocid": "A",
+            "releaseID": "A2",
+            "releaseDate": "2014-01-02",
+            "releaseTag": "planning",
+            "buyer": {"id": {"name": None}}
+        }
+
+        expected = {
+            "ocid": "A",
+            "releaseID": "A2",
+            "releaseDate": "2014-01-02",
+            "releaseTag": "planning",
+            "buyer": {
+                "id": {
+                    "name": [
+                        {
+                            "value": "Department A",
+                            "releaseID": "A1",
+                            "releaseDate": "2014-01-01",
+                            "releaseTag": "planning"
+                        }
+                    ]
+                }
+            }
+        }
+
+        base = None
+        base = jsonmerge.merge(base, a, schema)
+        base = jsonmerge.merge(base, b, schema)
+
+        self.assertEqual(base, expected)
+
+    def test_ocds_version_does_update_on_empty_string(self):
+        # An empty string is a change in the value to "", so need to do this.
+        # Use null in JSON if don't want to update.
         schema = self.ocds_version_schema
 
         a = {
@@ -980,6 +1026,12 @@ class TestMerge(unittest.TestCase):
                             "value": "Department A",
                             "releaseID": "A1",
                             "releaseDate": "2014-01-01",
+                            "releaseTag": "planning"
+                        },
+                        {
+                            "value": "",
+                            "releaseID": "A2",
+                            "releaseDate": "2014-01-02",
                             "releaseTag": "planning"
                         }
                     ]
