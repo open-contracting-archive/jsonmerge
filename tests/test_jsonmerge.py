@@ -1537,8 +1537,81 @@ class TestGetSchema(unittest.TestCase):
 
         self.assertEqual(schema2, expected)
 
-    def test_merge_by_id_with_depth_no_ref(self):
+    def test_merge_by_id_with_depth_twice(self):
+        # Here were have a $ref that get_schema() should descend into twice.
+        #
+        # The way ArrayMergeById.get_schema() is currently implemented it
+        # expands any subschemas in #/definitions/refitem twice. By chance this
+        # currently results in the correct output, but it's not clear whether
+        # this is always the case. I can't currently find an example that
+        # breaks.
+        schema = {
+            "properties": {
+                "test": {
+                    "mergeStrategy": "arrayMergeById",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/refitem"
+                    }
+                },
+                "test2": {
+                    "mergeStrategy": "arrayMergeById",
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/refitem"
+                    }
+                }
+            },
+            "definitions": {
+                "refitem": {
+                    "type": "object",
+                    "properties": {
+                        "field1": {
+                            "type": "string",
+                            "mergeStrategy": "version"
+                        }
+                    }
+                }
+            }
+        }
+        expected = {
+            "properties": {
+                "test": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/refitem"
+                    }
+                },
+                "test2": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/refitem"
+                    }
+                }
+            },
+            "definitions": {
+                "refitem": {
+                    "type": "object",
+                    "properties": {
+                        "field1": {
+                            "type": "array",
+                            "items": {
+                                "properties": {
+                                    "value": {
+                                        "type": "string"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        merger = jsonmerge.Merger(schema)
+        schema2 = merger.get_schema()
+        self.assertEqual(schema2, expected)
 
+    def test_merge_by_id_with_depth_no_ref(self):
         schema = {
             "properties": {
                 "test": {
@@ -1556,7 +1629,6 @@ class TestGetSchema(unittest.TestCase):
                 }
             }
         }
-
         expected = {
             "properties": {
                 "test": {
@@ -1579,10 +1651,9 @@ class TestGetSchema(unittest.TestCase):
                 }
             },
         }
-
+        self.maxDiff = None
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
-
         self.assertEqual(schema2, expected)
 
     def test_ocdsversion_adds_array_type_and_ocds_properties(self):
@@ -1604,7 +1675,6 @@ class TestGetSchema(unittest.TestCase):
                 }
             }
         }
-
         expected = {
             "type": "object",
             "properties": {
@@ -1639,8 +1709,6 @@ class TestGetSchema(unittest.TestCase):
                 }
             }
         }
-
         merger = jsonmerge.Merger(schema)
         schema2 = merger.get_schema()
-
         self.assertEqual(schema2, expected)
