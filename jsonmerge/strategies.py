@@ -67,6 +67,14 @@ class Overwrite(Strategy):
         return walk.resolve_refs(schema)
 
 
+class OCDSOmit(Strategy):
+    def merge(self, walk, base, head, schema, meta, **kwargs):
+        return None
+
+    def get_schema(self, walk, schema, meta, **kwargs):
+        return None
+
+
 class Version(Strategy):
     def merge(self, walk, base, head, schema, meta, limit=None, unique=None, ignoreDups=True, **kwargs):
 
