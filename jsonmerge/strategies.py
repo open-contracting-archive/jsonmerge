@@ -72,7 +72,7 @@ class OCDSOmit(Strategy):
         return None
 
     def get_schema(self, walk, schema, meta, **kwargs):
-        return None
+        return walk.resolve_refs(schema)
 
 
 class Version(Strategy):
