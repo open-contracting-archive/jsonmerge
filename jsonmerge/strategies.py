@@ -123,9 +123,9 @@ class OCDSVersion(Strategy):
             base = list(base)
 
         meta = {
-            "releaseID": walk.merger.head_root.get('releaseID'),
-            "releaseDate": walk.merger.head_root.get('releaseDate'),
-            "releaseTag": walk.merger.head_root.get('releaseTag')
+            "releaseID": walk.merger.head_root.get('id'),
+            "releaseDate": walk.merger.head_root.get('date'),
+            "releaseTag": walk.merger.head_root.get('tag')
         }
 
         if (not base or base[-1]['value'] != head) and head != None:

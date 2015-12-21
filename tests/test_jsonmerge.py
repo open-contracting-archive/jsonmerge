@@ -908,25 +908,25 @@ class TestMerge(unittest.TestCase):
 
         a = {
             "ocid": "A",
-            "releaseID": "A1",
-            "releaseDate": "2014-01-01",
-            "releaseTag": "planning",
+            "id": "A1",
+            "date": "2014-01-01",
+            "tag": "planning",
             "buyer": {"id": {"name": "Department A"}}
         }
 
         b = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {"id": {"name": "Department A - Office A"}}
         }
 
         expected = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {
                 "id": {
                     "name": [
@@ -958,33 +958,33 @@ class TestMerge(unittest.TestCase):
 
         a = {
             "ocid": "A",
-            "releaseID": "A1",
-            "releaseDate": "2014-01-01",
-            "releaseTag": "planning",
+            "id": "A1",
+            "date": "2014-01-01",
+            "tag": "planning",
             "buyer": {"id": {"name": "Department A"}}
         }
 
         b = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {"id": {"name": "Department A - Office A"}}
         }
 
         c = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {"id": {"name": "Department A - Office A"}}
         }
 
         expected = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {
                 "id": {
                     "name": [
@@ -1019,25 +1019,25 @@ class TestMerge(unittest.TestCase):
 
         a = {
             "ocid": "A",
-            "releaseID": "A1",
-            "releaseDate": "2014-01-01",
-            "releaseTag": "planning",
+            "id": "A1",
+            "date": "2014-01-01",
+            "tag": "planning",
             "buyer": {"id": {"name": "Department A"}}
         }
 
         b = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {"id": {"name": None}}
         }
 
         expected = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {
                 "id": {
                     "name": [
@@ -1065,25 +1065,25 @@ class TestMerge(unittest.TestCase):
 
         a = {
             "ocid": "A",
-            "releaseID": "A1",
-            "releaseDate": "2014-01-01",
-            "releaseTag": "planning",
+            "id": "A1",
+            "date": "2014-01-01",
+            "tag": "planning",
             "buyer": {"id": {"name": "Department A"}}
         }
 
         b = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {"id": {"name": ""}}
         }
 
         expected = {
             "ocid": "A",
-            "releaseID": "A2",
-            "releaseDate": "2014-01-02",
-            "releaseTag": "planning",
+            "id": "A2",
+            "date": "2014-01-02",
+            "tag": "planning",
             "buyer": {
                 "id": {
                     "name": [
